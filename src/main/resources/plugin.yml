@@ -1,0 +1,7 @@
+name: EmptyChunkFixer
+version: @version@
+main: net.starlegacy.emptychunkfixer.EmptyChunkFixer
+commands:
+  emptychunkfixer:
+    description: "Give information about changes done by EmptyChunkFixer"
+    permission: "emptychunkfixer.debug"
