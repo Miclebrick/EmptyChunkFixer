@@ -17,8 +17,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused") // referenced in plugin.yml
 public final class EmptyChunkFixer extends JavaPlugin implements Listener {
@@ -43,8 +46,12 @@ public final class EmptyChunkFixer extends JavaPlugin implements Listener {
         }
     }
 
+    private static Set<String> worlds;
+
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+        worlds = new HashSet<>(getConfig().getStringList("worlds"));
         getServer().getPluginManager().registerEvents(this, this);
     }
 
@@ -57,6 +64,7 @@ public final class EmptyChunkFixer extends JavaPlugin implements Listener {
             if (event.isNewChunk()) return; // we're only fixing broken chunks from before
             CraftChunk craftChunk = (CraftChunk) event.getChunk();
             World world = craftChunk.getWorld();
+            if(!worlds.contains(world.getName())) return;
             if (world.getEnvironment() == World.Environment.THE_END) return; // only do it in space
             Chunk chunk = craftChunk.getHandle();
             ChunkSection[] sections = chunk.getSections();

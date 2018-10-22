@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/EmptyChunkFixer.iml" filepath="$PROJECT_DIR$/EmptyChunkFixer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EmptyChunkFixer_main.iml" filepath="$PROJECT_DIR$/.idea/modules/EmptyChunkFixer_main.iml" group="EmptyChunkFixer" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/EmptyChunkFixer_test.iml" filepath="$PROJECT_DIR$/.idea/modules/EmptyChunkFixer_test.iml" group="EmptyChunkFixer" />
     </modules>
   </component>
 </project>
