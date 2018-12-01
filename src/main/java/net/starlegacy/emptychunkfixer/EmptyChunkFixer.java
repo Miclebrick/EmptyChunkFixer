@@ -4,6 +4,7 @@ import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import net.minecraft.server.v1_12_R1.Chunk;
 import net.minecraft.server.v1_12_R1.ChunkSection;
+import net.minecraft.server.v1_12_R1.IBlockData;
 import net.minecraft.server.v1_12_R1.NibbleArray;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -16,10 +17,7 @@ import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -64,8 +62,7 @@ public final class EmptyChunkFixer extends JavaPlugin implements Listener {
             if (event.isNewChunk()) return; // we're only fixing broken chunks from before
             CraftChunk craftChunk = (CraftChunk) event.getChunk();
             World world = craftChunk.getWorld();
-            if(!worlds.contains(world.getName())) return;
-            if (world.getEnvironment() == World.Environment.THE_END) return; // only do it in space
+            if (!worlds.contains(world.getName())) return;
             Chunk chunk = craftChunk.getHandle();
             ChunkSection[] sections = chunk.getSections();
 
@@ -73,17 +70,20 @@ public final class EmptyChunkFixer extends JavaPlugin implements Listener {
 
             for (int i = 0; i < sections.length; i++) {
                 ChunkSection section = sections[i];
-                if (section == Chunk.EMPTY_CHUNK_SECTION) continue;
 
-                int nonEmptyBlockCount = getNonEmptyBlockCount(section);
-                if (nonEmptyBlockCount > 0) {
-                    // only delete chunk sections with no blocks. otherwise, simply remove light
-                    section.a(new NibbleArray()); // set empty light data
+                if (section != null && getNonEmptyBlockCount(section) > 0) {
+                    // clear light
+                    Arrays.fill(section.getEmittedLightArray().asBytes(), (byte) 0);
                     continue;
                 }
 
+
                 // we haven't encountered any non-air blocks, ruthlessly slaughter it
+                if(section == null) continue;
                 sections[i] = null;
+//                boolean hasSky = chunk.getWorld().worldProvider.m();
+//                IBlockData[] predefinedBlockData = chunk.getWorld().chunkPacketBlockController.getPredefinedBlockData(chunk, i);
+//                (sections[i] = new ChunkSection(i << 4, hasSky, predefinedBlockData)).a(new NibbleArray());
                 cleared++;
             }
 
